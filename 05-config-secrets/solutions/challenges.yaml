@@ -1,0 +1,42 @@
+# Challenge 1
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: greeting
+data:
+  MESSAGE: "Hello K8s"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: greeter
+spec:
+  containers:
+    - name: app
+      image: busybox:1.36
+      command: ["sh", "-c", "while true; do echo $MESSAGE; sleep 5; done"]
+      envFrom:
+        - configMapRef:
+            name: greeting
+---
+# Challenge 2
+apiVersion: v1
+kind: Pod
+metadata:
+  name: creds-demo
+spec:
+  containers:
+    - name: app
+      image: busybox:1.36
+      command: ["sh", "-c", "cat /creds/username; echo; sleep 3600"]
+      volumeMounts:
+        - name: creds
+          mountPath: /creds
+          readOnly: true
+  volumes:
+    - name: creds
+      secret:
+        secretName: db-credentials
+        items:
+          - key: DB_USER
+            path: username

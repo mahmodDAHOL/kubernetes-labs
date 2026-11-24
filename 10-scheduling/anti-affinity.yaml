@@ -1,0 +1,26 @@
+# High availability: never put two replicas on the same node.
+# (2 worker nodes → the 3rd replica can't be placed and stays Pending. That's on purpose!)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spread
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: spread
+  template:
+    metadata:
+      labels:
+        app: spread
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:   # HARD rule
+            - labelSelector:
+                matchLabels:
+                  app: spread
+              topologyKey: kubernetes.io/hostname           # "same node" = same hostname label
+      containers:
+        - name: app
+          image: nginx:1.27

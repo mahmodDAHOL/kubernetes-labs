@@ -1,0 +1,20 @@
+# The app is healthy for 30s, then "hangs" (the health file disappears).
+# The liveness probe notices and the kubelet RESTARTS the container.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness-demo
+spec:
+  # `sh` running as PID 1 ignores SIGTERM, so without this the kubelet would wait the
+  # default 30s grace period before force-killing it. Short grace = faster demo.
+  terminationGracePeriodSeconds: 5
+  containers:
+    - name: app
+      image: busybox:1.36
+      command: ["sh", "-c", "touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600"]
+      livenessProbe:
+        exec:
+          command: ["cat", "/tmp/healthy"]
+        initialDelaySeconds: 5   # wait before the first check
+        periodSeconds: 5         # check every 5s
+        failureThreshold: 3      # 3 failures in a row → restart

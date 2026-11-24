@@ -1,0 +1,29 @@
+# A PersistentVolumeClaim = "I need 1Gi of storage". The default StorageClass (kind's
+# local-path provisioner) dynamically creates a PersistentVolume to satisfy it.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: notes-data
+spec:
+  accessModes: ["ReadWriteOnce"]   # mountable read-write by pods on ONE node
+  resources:
+    requests:
+      storage: 1Gi
+  # storageClassName: standard     # omitted → use the cluster's default StorageClass
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: notes
+spec:
+  containers:
+    - name: app
+      image: busybox:1.36
+      command: ["sh", "-c", "echo \"$(date) - pod started\" >> /data/notes.txt; sleep 3600"]
+      volumeMounts:
+        - name: data
+          mountPath: /data
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: notes-data

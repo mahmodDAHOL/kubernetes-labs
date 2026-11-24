@@ -1,0 +1,37 @@
+# Mount config as FILES. nginx reads its config from the ConfigMap;
+# the Secret is mounted read-only at /etc/secrets.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configured-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: configured-nginx
+  template:
+    metadata:
+      labels:
+        app: configured-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: config
+              mountPath: /etc/nginx/conf.d   # replaces the folder's contents
+            - name: secrets
+              mountPath: /etc/secrets
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: app-config
+            items:                  # only project this key, renamed to default.conf
+              - key: nginx.conf
+                path: default.conf
+        - name: secrets
+          secret:
+            secretName: db-credentials

@@ -1,0 +1,16 @@
+# Challenge 3: let pods from any namespace labelled team=monitoring reach backend:8080.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-allow-monitoring
+  namespace: netpol
+spec:
+  podSelector:
+    matchLabels: {role: backend}
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels: {team: monitoring}
+      ports:
+        - port: 8080

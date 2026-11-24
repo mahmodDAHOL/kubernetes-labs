@@ -1,0 +1,12 @@
+# ClusterIP (default type): a stable virtual IP + DNS name, reachable only INSIDE the cluster.
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami
+spec:
+  type: ClusterIP
+  selector:            # send traffic to pods with these labels
+    app: whoami
+  ports:
+    - port: 8080       # port the SERVICE listens on
+      targetPort: http # port on the POD (by name or number)

@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+---
+# An identity for a program running in a pod.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pod-reader
+  namespace: dev
+---
+# WHAT is allowed (in namespace dev only).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: read-pods
+  namespace: dev
+rules:
+  - apiGroups: [""]                 # "" = the core API group (pods, services, configmaps...)
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+---
+# WHO gets it: binds the Role to the ServiceAccount and to a human user "jane".
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-pods-binding
+  namespace: dev
+subjects:
+  - kind: ServiceAccount
+    name: pod-reader
+    namespace: dev
+  - kind: User
+    name: jane
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: read-pods
+  apiGroup: rbac.authorization.k8s.io

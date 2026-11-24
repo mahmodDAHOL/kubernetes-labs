@@ -1,0 +1,10 @@
+# Selects EVERY pod in the namespace (empty podSelector) and allows NO ingress.
+# Once a pod is selected by any policy for a direction, only explicitly allowed traffic gets in.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: netpol
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress"]

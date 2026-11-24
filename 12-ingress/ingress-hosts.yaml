@@ -1,0 +1,29 @@
+# Host-based routing: different hostnames → different Services.
+# *.localhost always resolves to 127.0.0.1, so no hosts-file editing is needed.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fruit-hosts
+spec:
+  ingressClassName: traefik      # which ingress controller should handle this
+  rules:
+    - host: apple.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: apple
+                port:
+                  number: 80
+    - host: banana.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: banana
+                port:
+                  number: 80

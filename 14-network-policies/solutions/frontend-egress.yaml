@@ -1,0 +1,27 @@
+# Challenge 2: lock down what the frontend can CONNECT TO (egress).
+# Only: DNS (to kube-dns in kube-system) + backend:8080. Everything else is blocked.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-egress
+  namespace: netpol
+spec:
+  podSelector:
+    matchLabels: {role: frontend}
+  policyTypes: ["Egress"]
+  egress:
+    - to:                                   # DNS. Forget this and every name lookup fails!
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - {port: 53, protocol: UDP}
+        - {port: 53, protocol: TCP}
+    - to:
+        - podSelector:
+            matchLabels: {role: backend}
+      ports:
+        - {port: 8080, protocol: TCP}

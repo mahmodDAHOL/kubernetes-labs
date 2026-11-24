@@ -1,0 +1,15 @@
+# Compute pi to 2000 digits, once. The Job succeeds when 1 pod completes successfully.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pi
+spec:
+  backoffLimit: 4                # retry a failed pod at most 4 times
+  ttlSecondsAfterFinished: 600   # auto-delete the Job 10 min after it finishes
+  template:
+    spec:
+      restartPolicy: Never       # Jobs need Never or OnFailure (not Always)
+      containers:
+        - name: pi
+          image: perl:5.40-slim
+          command: ["perl", "-Mbignum=bpi", "-wle", "print bpi(2000)"]

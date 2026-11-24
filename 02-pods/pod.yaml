@@ -1,0 +1,14 @@
+# The smallest deployable unit in Kubernetes.
+apiVersion: v1          # API group/version this kind lives in (`kubectl api-resources`)
+kind: Pod               # what type of object
+metadata:
+  name: web             # unique within the namespace
+  labels:               # key/value tags; used to SELECT objects (very important later)
+    app: web
+    tier: frontend
+spec:                   # DESIRED state
+  containers:
+    - name: nginx
+      image: nginx:1.27
+      ports:
+        - containerPort: 80   # informational; documents what the container listens on

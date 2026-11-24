@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  # simple key/value pairs → good for environment variables
+  APP_COLOR: "blue"
+  APP_MODE: "production"
+  # a whole file as a value → good for mounting as a file
+  nginx.conf: |
+    server {
+      listen 80;
+      location / {
+        default_type text/plain;
+        return 200 "Hello from a ConfigMap-provided nginx config!\n";
+      }
+      location /health {
+        return 200 "ok\n";
+      }
+    }

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: well-sized
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+      resources:
+        requests:          # what the SCHEDULER reserves on a node (guaranteed minimum)
+          cpu: 100m        # 100 millicores = 0.1 CPU
+          memory: 64Mi
+        limits:            # hard ceiling enforced at runtime
+          cpu: 250m        # exceeding CPU → throttled (slowed down)
+          memory: 128Mi    # exceeding memory → OOMKilled

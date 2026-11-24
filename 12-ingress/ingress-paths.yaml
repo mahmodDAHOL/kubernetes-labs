@@ -1,0 +1,25 @@
+# Path-based routing: one hostname, different URL paths → different Services.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fruit-paths
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: shop.localhost
+      http:
+        paths:
+          - path: /apple
+            pathType: Prefix
+            backend:
+              service:
+                name: apple
+                port:
+                  number: 80
+          - path: /banana
+            pathType: Prefix
+            backend:
+              service:
+                name: banana
+                port:
+                  number: 80

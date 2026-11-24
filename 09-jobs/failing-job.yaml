@@ -1,0 +1,14 @@
+# Fails ~70% of the time. Watch the Job retry until one attempt succeeds or the backoffLimit is hit.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: flaky
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: flaky
+          image: busybox:1.36
+          command: ["sh", "-c", "n=$((RANDOM % 10)); echo \"rolled $n\"; if [ $n -lt 7 ]; then echo FAIL; exit 1; fi; echo SUCCESS"]

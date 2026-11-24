@@ -1,0 +1,12 @@
+# Requests more CPU than any node has → the scheduler cannot place it → Pending forever.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: too-big
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+      resources:
+        requests:
+          cpu: "500"       # 500 whole CPUs

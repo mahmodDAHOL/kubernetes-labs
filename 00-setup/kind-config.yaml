@@ -1,0 +1,27 @@
+# A 3-node learning cluster: 1 control-plane + 2 workers.
+#
+# - Port 30080 on the control-plane node is mapped to localhost:30080 so you can reach a
+#   NodePort Service (Lab 04) and the ingress controller (Lab 12+) from your browser.
+# - kind's default network plugin (kindnet) is disabled; create-cluster.ps1 installs Calico
+#   instead, because Calico enforces NetworkPolicies on every kernel, including WSL2 (Lab 14).
+# - Node image is pinned to Kubernetes v1.34 because Kubernetes >= 1.35 refuses to run on
+#   hosts using cgroup v1 (older Docker Desktop / WSL setups).
+#   Check yours with:  docker info --format '{{.CgroupVersion}}'
+#   If it prints 2, you may delete the "image:" lines to get the newest version.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: lab
+networking:
+  disableDefaultCNI: true
+  podSubnet: 10.244.0.0/16
+nodes:
+  - role: control-plane
+    image: kindest/node:v1.34.0
+    extraPortMappings:
+      - containerPort: 30080
+        hostPort: 30080
+        protocol: TCP
+  - role: worker
+    image: kindest/node:v1.34.0
+  - role: worker
+    image: kindest/node:v1.34.0

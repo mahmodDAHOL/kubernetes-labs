@@ -1,0 +1,13 @@
+# A pod running as the "pod-reader" ServiceAccount. Kubernetes automatically mounts its
+# credentials at /var/run/secrets/kubernetes.io/serviceaccount/ (token, ca.crt, namespace).
+apiVersion: v1
+kind: Pod
+metadata:
+  name: api-client
+  namespace: dev
+spec:
+  serviceAccountName: pod-reader
+  containers:
+    - name: curl
+      image: curlimages/curl:8.11.1
+      command: ["sleep", "3600"]

@@ -1,0 +1,20 @@
+# Only run on nodes labelled disk=ssd.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: needs-ssd
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: needs-ssd
+  template:
+    metadata:
+      labels:
+        app: needs-ssd
+    spec:
+      nodeSelector:
+        disk: ssd
+      containers:
+        - name: app
+          image: nginx:1.27

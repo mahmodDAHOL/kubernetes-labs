@@ -1,0 +1,52 @@
+# Two tiny apps ("apple" and "banana") + a ClusterIP Service for each.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apple
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: apple}
+  template:
+    metadata:
+      labels: {app: apple}
+    spec:
+      containers:
+        - name: echo
+          image: hashicorp/http-echo:1.0
+          args: ["-text=Hello from APPLE", "-listen=:5678"]
+          ports: [{containerPort: 5678}]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apple
+spec:
+  selector: {app: apple}
+  ports: [{port: 80, targetPort: 5678}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: banana
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: banana}
+  template:
+    metadata:
+      labels: {app: banana}
+    spec:
+      containers:
+        - name: echo
+          image: hashicorp/http-echo:1.0
+          args: ["-text=Hello from BANANA", "-listen=:5678"]
+          ports: [{containerPort: 5678}]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: banana
+spec:
+  selector: {app: banana}
+  ports: [{port: 80, targetPort: 5678}]

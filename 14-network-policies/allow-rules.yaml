@@ -1,0 +1,34 @@
+# frontend → backend:8080 is allowed
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-allow-frontend
+  namespace: netpol
+spec:
+  podSelector:
+    matchLabels: {role: backend}      # policy applies TO backend pods
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: {role: frontend}   # traffic FROM frontend pods
+      ports:
+        - port: 8080
+          protocol: TCP
+---
+# backend → db:6379 is allowed
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-allow-backend
+  namespace: netpol
+spec:
+  podSelector:
+    matchLabels: {role: db}
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: {role: backend}
+      ports:
+        - port: 6379

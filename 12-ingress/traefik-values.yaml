@@ -1,0 +1,15 @@
+# Helm values for the Traefik ingress controller (chart traefik/traefik 42.x).
+# Expose Traefik's HTTP entrypoint on NodePort 30080, which our kind cluster maps
+# to localhost:30080 on your PC (see 00-setup/kind-config.yaml).
+service:
+  spec:
+    type: NodePort
+ports:
+  web:
+    nodePort: 30080
+  websecure:
+    expose:
+      default: false     # no HTTPS port mapping in our kind cluster
+ingressClass:
+  enabled: true
+  isDefaultClass: true

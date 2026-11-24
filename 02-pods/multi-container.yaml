@@ -1,0 +1,31 @@
+# Two containers in ONE pod: they share the network (localhost) and can share volumes.
+# Pattern: "sidecar". The writer produces content, nginx serves it.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shared
+  labels:
+    app: shared
+spec:
+  volumes:
+    - name: html
+      emptyDir: {}          # scratch volume that lives as long as the pod
+  initContainers:           # run to completion BEFORE the main containers start
+    - name: init
+      image: busybox:1.36
+      command: ["sh", "-c", "echo '<h1>prepared by init container</h1>' > /data/index.html"]
+      volumeMounts:
+        - name: html
+          mountPath: /data
+  containers:
+    - name: nginx
+      image: nginx:1.27
+      volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+    - name: writer
+      image: busybox:1.36
+      command: ["sh", "-c", "while true; do date >> /data/index.html; sleep 5; done"]
+      volumeMounts:
+        - name: html
+          mountPath: /data

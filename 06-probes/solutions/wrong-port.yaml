@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: wrong-port
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.27
+      livenessProbe:
+        tcpSocket:
+          port: 8081      # nginx listens on 80, so this always fails
+        periodSeconds: 10
+        failureThreshold: 3

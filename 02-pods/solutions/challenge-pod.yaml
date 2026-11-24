@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+  labels:
+    app: cache
+    env: dev
+spec:
+  containers:
+    - name: redis
+      image: redis:7
+      ports:
+        - containerPort: 6379
+# kubectl apply -f challenge-pod.yaml
+# kubectl exec redis -- redis-cli ping      → PONG

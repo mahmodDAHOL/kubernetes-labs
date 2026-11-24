@@ -1,0 +1,32 @@
+# --- Files generated while doing the labs ---
+02-pods/my-pod.yaml
+05-config-secrets/settings.txt
+05-config-secrets/broken.yaml
+11-helm/my-values.yaml
+11-helm/mychart/
+11-helm/*.tgz
+17-capstone/my-solution/
+
+# --- Secrets & credentials (never commit these) ---
+*.key
+*.pem
+*.crt
+*.p12
+.env
+.env.*
+kubeconfig
+*.kubeconfig
+
+# --- Helm ---
+charts/*.tgz
+
+# --- Editor / tool state ---
+.copilot-assistant/
+.vscode/
+.idea/
+*.swp
+
+# --- OS ---
+Thumbs.db
+Desktop.ini
+.DS_Store

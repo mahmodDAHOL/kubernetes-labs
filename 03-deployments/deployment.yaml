@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app: web
+spec:
+  replicas: 3                     # how many identical pods we want
+  selector:                       # which pods does this Deployment own?
+    matchLabels:
+      app: web                    # MUST match template.metadata.labels below
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1                 # at most 1 extra pod during an update
+      maxUnavailable: 0           # never go below 3 ready pods
+  template:                       # the Pod "cookie cutter": same fields as a Pod's metadata+spec
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.26
+          ports:
+            - containerPort: 80

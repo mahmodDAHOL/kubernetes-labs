@@ -1,0 +1,21 @@
+# Challenge 1 + 2 solution. Change "-text=v1" to "-text=v2" and re-apply for challenge 2.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: echo
+          image: hashicorp/http-echo:1.0
+          args: ["-text=v1", "-listen=:5678"]
+          ports:
+            - containerPort: 5678

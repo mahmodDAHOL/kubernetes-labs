@@ -1,0 +1,33 @@
+# Three ways to inject configuration as ENVIRONMENT VARIABLES.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: env-demo
+spec:
+  restartPolicy: Never
+  containers:
+    - name: app
+      image: busybox:1.36
+      command: ["sh", "-c", "env | sort | grep -E 'APP_|DB_|COLOR|MY_'; sleep 3600"]
+      env:
+        - name: MY_LITERAL              # 1. a plain value
+          value: "hard-coded"
+        - name: COLOR                   # 2. one key from a ConfigMap
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: APP_COLOR
+        - name: DB_PASS                 # ... or one key from a Secret
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_PASSWORD
+        - name: MY_POD_IP               # bonus: the Downward API (info about the pod itself)
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+      envFrom:                          # 3. ALL keys from a ConfigMap/Secret at once
+        - configMapRef:
+            name: app-config
+        - secretRef:
+            name: db-credentials

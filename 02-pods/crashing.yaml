@@ -1,0 +1,11 @@
+# A container that exits with an error after 3 seconds. Watch the kubelet restart it.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: crasher
+spec:
+  restartPolicy: Always     # try changing to OnFailure / Never and compare
+  containers:
+    - name: app
+      image: busybox:1.36
+      command: ["sh", "-c", "echo 'starting...'; sleep 3; echo 'oops, crashing'; exit 1"]
